@@ -5,7 +5,7 @@ export interface FetchData {
 }
 
 export interface Data {
-  id: number;
+  imageId: number;
   name: string;
   url: string;
   thumbnail: string;

@@ -7,10 +7,12 @@ function Home() {
   const [data, setData] = useState<Data[]>([]);
   const [page, setPage] = useState(1);
 
+  // TODO: api호출시 로딩 표시
   const fetchData = async () => {
     const { data } = await axios.get(`https://picsum.photos/v2/list?page=${page}`);
+
     const homeItems = data.map((el: FetchData) => ({
-      id: el.id,
+      imageId: el.id,
       name: `Photo by ${el.author}`,
       url: el.download_url,
       thumbnail: el.download_url,
@@ -31,10 +33,10 @@ function Home() {
       <div style={{ display: "flex", flexWrap: "wrap" }}>
         {data &&
           data.map((el) => (
-            <div key={el.id}>
-              <Link to={`/detail/${el.id}`}>
+            <div key={el.imageId}>
+              <Link to={`/detail/${el.imageId}`} state={{ itemImage: el.url }}>
                 <div>
-                  <img src={el.thumbnail} alt={`이미지-${el.id}`} style={{ width: "100px" }} />
+                  <img src={el.thumbnail} alt={`이미지-${el.imageId}`} style={{ width: "100px" }} />
                 </div>
               </Link>
             </div>
