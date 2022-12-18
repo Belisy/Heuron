@@ -3,13 +3,31 @@ import React, { MouseEventHandler, useCallback, useEffect, useRef, useState } fr
 import { useQuery } from "react-query";
 import { useLocation, useParams } from "react-router-dom";
 
+// 데이터 받기 (새로고침하면 데이터가 안나옴/ 해결방법 찾기
+// => (리덕스: data, detailData 각각 axios detailData는 새로운 상세페이지로 이동할때마다 초기화 후 데이터 넣기))
+// 1. props (새로고침하면 데이터 안나옴)
+// 2. context api
+// 3. redux toolkit
+// 4. react query
+
+// const { data: imageItem } = useQuery(["get-data"], () => axios.get(`https://picsum.photos/v2/list?page=${page}`));
+
+// useEffect(() => {
+//   fetchData();
+// }, []);
+
 function Detail() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [ctx, setCtx] = useState();
-  const [rotationAngle, setRotationAngle] = useState<number>(0);
-  const [size, setSize] = useState<number>(1);
+  const [rotationAngle, setRotationAngle] = useState<number>(0); // 회전각도
+  const [size, setSize] = useState<number>(1); // 사이즈 변경 값 (scale)
+  const [isMouseDown, setIsMouseDown] = useState(false); // 마우스 다운상태 여부
 
-  const [page, setPage] = useState(1);
+  const [mouseDownClientX, setMouseDownClientX] = useState(0); // 마우스 다운시 x좌표
+  const [mouseDownClientY, setMouseDownClientY] = useState(0); // 마우스 다운시 y좌표
+  const [mouseUpClientX, setMouseUpClientX] = useState(0);
+  const [mouseUpClientY, setMouseUpClientY] = useState(0);
+
+  const [page, setPage] = useState(1); // 추후 무한스크롤 구현용
   const { imageId } = useParams();
   const location = useLocation();
   const { itemImage } = location.state;
@@ -63,26 +81,39 @@ function Detail() {
     };
   }, [itemImage, size]);
 
-  // 데이터 받기 (새로고침하면 데이터가 안나옴/ 해결방법 찾기
-  // => (리덕스: data, detailData 각각 axios detailData는 새로운 상세페이지로 이동할때마다 초기화 후 데이터 넣기))
-  // 1. props (새로고침하면 데이터 안나옴)
-  // 2. context api
-  // 3. redux toolkit
-  // 4. react query
-
-  // const { data: imageItem } = useQuery(["get-data"], () => axios.get(`https://picsum.photos/v2/list?page=${page}`));
-
-  // useEffect(() => {
-  //   fetchData();
-  // }, []);
-
   const onMouseDownFunc = useCallback((e: any) => {
+    // 타입 e: React.MouseEvent<HTMLElement, MouseEvent>
+    setIsMouseDown(true);
     // firefox, Safari, Chrome, Opera
     // IE, Opera
+    setMouseDownClientX(e.clientX);
+    setMouseDownClientY(e.clientY);
+
     const isRight = ("which" in e && e.which === 3) || ("button" in e && e.button === 2);
 
     isRight && setRotationAngle((angle) => (angle + 1) % 360); // 오른쪽 클릭시
     isRight || setSize((value) => value + 0.05); // 왼쪽 클릭시
+  }, []);
+  // 모바일 버전으로 하면 오른쪽클릭시 메뉴창 뜸
+
+  const onMouseMoveFunc = useCallback(
+    (e: any) => {
+      if (!isMouseDown) {
+        return;
+      }
+      console.log(e.offsetX);
+    },
+    [isMouseDown],
+  );
+
+  const onMouseUpFunc = useCallback((e: any) => {
+    setIsMouseDown(false);
+  }, []);
+
+  const onClickFunc = useCallback((e: any) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+    const offSetX = e.offsetX;
+    const offSetY = e.offsetY;
   }, []);
 
   return (
@@ -94,6 +125,9 @@ function Detail() {
         height={canvasMaxHeight}
         onContextMenu={(e) => e.preventDefault()}
         onMouseDown={onMouseDownFunc}
+        onMouseMove={onMouseMoveFunc}
+        onMouseUp={onMouseUpFunc}
+        onClick={onClickFunc}
         style={{ background: "pink" }}
       />
     </>
