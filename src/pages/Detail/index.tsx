@@ -21,6 +21,7 @@ function Detail() {
   const [rotationAngle, setRotationAngle] = useState<number>(0); // 회전각도
   const [size, setSize] = useState<number>(1); // 사이즈 변경 값 (scale)
   const [isMouseDown, setIsMouseDown] = useState(false); // 마우스 다운상태 여부
+  const [isRight, setIsRight] = useState(false); // 마우스 오른쪽 클릭여부 (false:왼쪽클릭상태)
 
   const [mouseDownClientX, setMouseDownClientX] = useState(0); // 마우스 다운시 x좌표
   const [mouseDownClientY, setMouseDownClientY] = useState(0); // 마우스 다운시 y좌표
@@ -89,10 +90,11 @@ function Detail() {
     setMouseDownClientX(e.clientX);
     setMouseDownClientY(e.clientY);
 
-    const isRight = ("which" in e && e.which === 3) || ("button" in e && e.button === 2);
+    setIsRight(("which" in e && e.which === 3) || ("button" in e && e.button === 2));
+    // const isRight = ("which" in e && e.which === 3) || ("button" in e && e.button === 2);
 
-    isRight && setRotationAngle((angle) => (angle + 1) % 360); // 오른쪽 클릭시
-    isRight || setSize((value) => value + 0.05); // 왼쪽 클릭시
+    // isRight && setRotationAngle((angle) => (angle + 1) % 360); // 오른쪽 클릭시
+    // isRight || setSize((value) => value + 0.05); // 왼쪽 클릭시
   }, []);
   // 모바일 버전으로 하면 오른쪽클릭시 메뉴창 뜸
 
@@ -101,9 +103,17 @@ function Detail() {
       if (!isMouseDown) {
         return;
       }
-      console.log(e.offsetX);
+      if (isRight) {
+        isRight && setRotationAngle((angle) => (angle + 1) % 360); // 오른쪽 클릭시
+      }
+      if (!isRight) {
+        isRight || setSize((value) => value + 0.05); // 왼쪽 클릭시
+      }
+      console.log("sjdklf", isRight);
+      console.log(e.clientX, e.clientY);
+      const a = mouseDownClientX - e.clientX > 0 ? true : false; // true: 마우스 왼쪽으로 이동중
     },
-    [isMouseDown],
+    [isMouseDown, isRight, mouseDownClientX],
   );
 
   const onMouseUpFunc = useCallback((e: any) => {
