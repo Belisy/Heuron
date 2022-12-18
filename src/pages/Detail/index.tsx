@@ -24,9 +24,6 @@ function Detail() {
   const [isRight, setIsRight] = useState(false); // 마우스 오른쪽 클릭여부 (false:왼쪽클릭상태)
 
   const [mouseDownClientX, setMouseDownClientX] = useState(0); // 마우스 다운시 x좌표
-  const [mouseDownClientY, setMouseDownClientY] = useState(0); // 마우스 다운시 y좌표
-  const [mouseUpClientX, setMouseUpClientX] = useState(0);
-  const [mouseUpClientY, setMouseUpClientY] = useState(0);
 
   const [page, setPage] = useState(1); // 추후 무한스크롤 구현용
   const { imageId } = useParams();
@@ -70,7 +67,7 @@ function Detail() {
       context?.save();
       context?.setTransform(1, 0, 0, 1, 0, 0);
 
-      // context?.resetTransform();
+      context?.resetTransform();
 
       context?.translate(400, 300);
       context?.scale(size, size);
@@ -85,16 +82,12 @@ function Detail() {
   const onMouseDownFunc = useCallback((e: any) => {
     // 타입 e: React.MouseEvent<HTMLElement, MouseEvent>
     setIsMouseDown(true);
+
+    setMouseDownClientX(e.clientX);
+
     // firefox, Safari, Chrome, Opera
     // IE, Opera
-    setMouseDownClientX(e.clientX);
-    setMouseDownClientY(e.clientY);
-
     setIsRight(("which" in e && e.which === 3) || ("button" in e && e.button === 2));
-    // const isRight = ("which" in e && e.which === 3) || ("button" in e && e.button === 2);
-
-    // isRight && setRotationAngle((angle) => (angle + 1) % 360); // 오른쪽 클릭시
-    // isRight || setSize((value) => value + 0.05); // 왼쪽 클릭시
   }, []);
   // 모바일 버전으로 하면 오른쪽클릭시 메뉴창 뜸
 
@@ -103,27 +96,38 @@ function Detail() {
       if (!isMouseDown) {
         return;
       }
+
+      const isMouseMovingLeft = mouseDownClientX - e.clientX > 0 ? true : false; // true: 마우스 왼쪽으로 이동중
+
+      // 오른쪽 클릭시 (회전)
       if (isRight) {
-        isRight && setRotationAngle((angle) => (angle + 1) % 360); // 오른쪽 클릭시
+        if (isMouseMovingLeft) {
+          // 마우스 왼쪽 이동중
+          isRight && setRotationAngle((angle) => (angle - 1) % 360);
+        } else {
+          // 마우스 오른쪽 이동중
+          isRight && setRotationAngle((angle) => (angle + 1) % 360);
+        }
       }
+
+      // 왼쪽 클릭시 (확대/축소)
       if (!isRight) {
-        isRight || setSize((value) => value + 0.05); // 왼쪽 클릭시
+        if (isMouseMovingLeft) {
+          // 마우스 왼쪽 이동중 (축소)
+          isRight || setSize((value) => value - 0.05);
+        } else {
+          // 마우스 오른쪽 이동중 (확대)
+          isRight || setSize((value) => value + 0.05);
+        }
       }
-      console.log("sjdklf", isRight);
+
       console.log(e.clientX, e.clientY);
-      const a = mouseDownClientX - e.clientX > 0 ? true : false; // true: 마우스 왼쪽으로 이동중
     },
     [isMouseDown, isRight, mouseDownClientX],
   );
 
   const onMouseUpFunc = useCallback((e: any) => {
     setIsMouseDown(false);
-  }, []);
-
-  const onClickFunc = useCallback((e: any) => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-    const offSetX = e.offsetX;
-    const offSetY = e.offsetY;
   }, []);
 
   return (
@@ -137,7 +141,6 @@ function Detail() {
         onMouseDown={onMouseDownFunc}
         onMouseMove={onMouseMoveFunc}
         onMouseUp={onMouseUpFunc}
-        onClick={onClickFunc}
         style={{ background: "pink" }}
       />
     </>
