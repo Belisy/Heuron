@@ -1,38 +1,50 @@
+import ErrorFallback from "@components/ErrorFallback";
 import { FetchData, Data } from "@components/Type";
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { getPicsumList } from "@axios/index";
 
 function Home() {
-  const [data, setData] = useState<Data[]>([]);
+  const [homeDataList, setHomeDataList] = useState<Data[]>([]);
   const [page, setPage] = useState(1);
+  const [isError, setIsError] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  // TODO: api호출시 로딩 표시
   const fetchData = async () => {
-    const { data } = await axios.get(`https://picsum.photos/v2/list?page=${page}`);
-
-    const homeItems = data.map((el: FetchData) => ({
-      imageId: el.id,
-      name: `Photo by ${el.author}`,
-      url: el.download_url,
-      thumbnail: el.download_url,
-    }));
-
-    console.log("data", data);
-    console.log("homeItems", homeItems);
-    setData(homeItems);
+    try {
+      setIsLoading(true);
+      const getDataList = await getPicsumList(page);
+      const dataList = getDataList.map((el: FetchData) => ({
+        imageId: el.id,
+        name: `Photo by ${el.author}`,
+        url: el.download_url,
+        thumbnail: el.download_url,
+      }));
+      setHomeDataList(dataList);
+      setIsLoading(false);
+    } catch (error) {
+      setIsError(true);
+    }
   };
 
   useEffect(() => {
     fetchData();
   }, []);
 
+  if (isError) {
+    return <ErrorFallback error={isError} resetErrorBoundary={() => {}} />;
+  }
+
+  if (isLoading) {
+    return <div>로딩중...</div>;
+  }
+
   return (
     <div>
       <h1>홈</h1>
       <div style={{ display: "flex", flexWrap: "wrap" }}>
-        {data &&
-          data.map((el) => (
+        {homeDataList &&
+          homeDataList.map((el) => (
             <div key={el.imageId}>
               <Link to={`/detail/${el.imageId}`} state={{ itemImage: el.url }}>
                 <div>
@@ -42,8 +54,6 @@ function Home() {
             </div>
           ))}
       </div>
-
-      <button onClick={fetchData}>Generate</button>
     </div>
   );
 }
