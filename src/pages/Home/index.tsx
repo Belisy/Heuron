@@ -2,7 +2,6 @@ import React, { useCallback, useState } from "react";
 import chunk from "@utils/chunk";
 import HomeWrapper from "@pages/Home/styles";
 import InfiniteScroll from "@components/InfiniteScroll";
-import Loding from "@components/Loding";
 import { Data } from "@components/Type";
 
 function Home() {
