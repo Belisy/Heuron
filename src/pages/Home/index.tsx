@@ -1,7 +1,6 @@
 import React, { useCallback, useState } from "react";
 import chunk from "@utils/chunk";
 import HomeWrapper from "@pages/Home/styles";
-import ErrorFallback from "@components/ErrorFallback";
 import InfiniteScroll from "@components/InfiniteScroll";
 import Loding from "@components/Loding";
 import { Data } from "@components/Type";
@@ -9,8 +8,8 @@ import { Data } from "@components/Type";
 function Home() {
   const [homeDataList, setHomeDataList] = useState<Data[]>([]);
   const [page, setPage] = useState(1);
-  const [isError, setIsError] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+
+  const newDataList = chunk(homeDataList, 3);
 
   const setPageFunc = useCallback(() => {
     setPage((prev) => prev + 1);
@@ -19,14 +18,6 @@ function Home() {
     setHomeDataList((prev) => [...prev, ...newList]);
   }, []);
 
-  const newDataList = chunk(homeDataList, 3);
-
-  if (isError) {
-    return <ErrorFallback error={isError} />;
-  }
-  if (isLoading) {
-    return <Loding />;
-  }
   return (
     <HomeWrapper>
       <h1>Heuron Image Gallery</h1>
