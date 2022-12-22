@@ -18,12 +18,6 @@ function Home() {
   const setHomeDataListFunc = useCallback((newList: Data[]) => {
     setHomeDataList((prev) => [...prev, ...newList]);
   }, []);
-  const setIsLoadingFunc = useCallback((value: boolean | ((prevState: boolean) => boolean)) => {
-    setIsLoading(value);
-  }, []);
-  const setIsErrorFunc = useCallback((value: boolean | ((prevState: boolean) => boolean)) => {
-    setIsError(value);
-  }, []);
 
   const newDataList = chunk(homeDataList, 3);
 
@@ -43,8 +37,6 @@ function Home() {
             setPageFunc={setPageFunc}
             newDataList={newDataList}
             setHomeDataListFunc={setHomeDataListFunc}
-            setIsLoadingFunc={setIsLoadingFunc}
-            setIsErrorFunc={setIsErrorFunc}
           />
         )}
       </table>

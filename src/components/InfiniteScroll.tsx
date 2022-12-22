@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { getPicsumList } from "@axios/index";
 import { Data, FetchData } from "@components/Type";
@@ -10,18 +10,13 @@ function InfiniteScroll({
   setPageFunc,
   newDataList,
   setHomeDataListFunc,
-  setIsLoadingFunc,
-  setIsErrorFunc,
 }: {
   page: number;
   setPageFunc: () => void;
   newDataList: Data[][];
   setHomeDataListFunc: (dataList: Data[]) => void;
-  setIsLoadingFunc: (value: boolean) => void;
-  setIsErrorFunc: (value: boolean) => void;
 }) {
   const targetRef = useRef(null);
-  // const [homeDataList, setHomeDataList] = useState<Data[]>([]);
   // const [isError, setIsError] = useState(false);
   // const [isLoading, setIsLoading] = useState(false);
 
