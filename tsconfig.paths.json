@@ -4,7 +4,10 @@
     "paths": {
       "@pages/*": ["src/pages/*"],
       "@components/*": ["src/components/*"],
-      "@axios/*": ["src/axios/*"]
+      "@axios/*": ["src/axios/*"],
+      "@hooks/*": ["src/hooks/*"],
+      "@utils/*": ["src/utils/*"],
+      "@style/*": ["src/style/*"]
     }
   }
 }

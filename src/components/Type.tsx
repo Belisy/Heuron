@@ -1,5 +1,5 @@
 export interface FetchData {
-  id: number;
+  id: string;
   author: string;
   download_url: string;
 }
