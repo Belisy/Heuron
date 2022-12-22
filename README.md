@@ -1,6 +1,6 @@
 <div >
 
-# **Rapid Global**
+# **Heuron**
 
 ## **1. 사용 기술**
 
