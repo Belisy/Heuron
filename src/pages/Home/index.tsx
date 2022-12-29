@@ -21,14 +21,16 @@ function Home() {
     <HomeWrapper>
       <h1>Heuron Image Gallery</h1>
       <table>
-        {newDataList && (
-          <InfiniteScroll
-            page={page}
-            setPageFunc={setPageFunc}
-            newDataList={newDataList}
-            setHomeDataListFunc={setHomeDataListFunc}
-          />
-        )}
+        <tbody>
+          {newDataList && (
+            <InfiniteScroll
+              page={page}
+              setPageFunc={setPageFunc}
+              newDataList={newDataList}
+              setHomeDataListFunc={setHomeDataListFunc}
+            />
+          )}
+        </tbody>
       </table>
     </HomeWrapper>
   );

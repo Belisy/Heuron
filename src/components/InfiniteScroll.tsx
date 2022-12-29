@@ -51,7 +51,6 @@ function InfiniteScroll({
 
   const callback = ([entries]: IntersectionObserverEntry[]) => {
     if (entries.isIntersecting) {
-      console.log("fetch");
       setPageFunc();
     }
   };
@@ -86,9 +85,9 @@ function InfiniteScroll({
             ))}
           </tr>
         ))}
-      <div className="target" ref={targetRef}>
-        Loading...
-      </div>
+      <tr className="target" ref={targetRef}>
+        <td>Loading...</td>
+      </tr>
     </>
   );
 }
