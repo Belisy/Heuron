@@ -61,6 +61,8 @@ function InfiniteScroll({
       threshold: 1,
     });
     observer.observe(targetRef.current);
+
+    return () => observer.disconnect();
   }, [targetRef]);
 
   // if (isError) {
